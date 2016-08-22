@@ -6,6 +6,9 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -32,6 +35,8 @@ public class ForecastFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //avisa que tenemos un menu que mostrar
+        ///para habilitar el llamado a oncreateoptionmenu
         setHasOptionsMenu(true);
     }
 
@@ -44,8 +49,29 @@ public class ForecastFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_refresh) {
+            new FetchWeatherAsync().execute("http://api.openweathermap.org/data/2.5/forecast?q=Lima&mode=json&units=metric&cnt=7&appid=8ecd7f366aa3b3b35553efebdac539a1");
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+
+    }
+
+    void callService(){
         String array[] = {"Monday - Sunny - 88/63",
                 "Tuesday - Sunny - 88/63",
                 "Wednesday - Sunny - 88/63",
@@ -142,6 +168,7 @@ public class ForecastFragment extends Fragment {
                 }
             }
         }
+        Log.i("log forescast",""+forecastJsonStr);
         return forecastJsonStr;
     }
 }
